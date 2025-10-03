@@ -1,0 +1,3 @@
+import React, {useState} from 'react';
+import axios from 'axios';
+export default function Logo(){ const [file, setFile] = useState(null); const upload = async ()=>{ if(!file){ alert('Choose a file'); return;} try{ const form = new FormData(); form.append('file', file); const token = prompt('Enter admin token (for prototype)'); const res = await axios.post('http://localhost:8000/upload/logo', form, { headers: {'Content-Type':'multipart/form-data','Authorization':'Bearer '+token} }); alert('Uploaded: '+res.data.filename);}catch(e){ alert('Upload failed.'); } }; return (<div><h2>Upload Logo</h2><input type='file' onChange={e=>setFile(e.target.files[0])} /><button onClick={upload}>Upload</button></div>); }

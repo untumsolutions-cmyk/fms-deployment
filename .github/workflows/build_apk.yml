@@ -1,0 +1,62 @@
+name: Build unsigned APK (Capacitor) and upload artifact
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+      - name: Install Capacitor CLI
+        run: |
+          npm install -g @capacitor/cli
+      - name: Initialize Capacitor (if not initialized)
+        run: |
+          cd frontend
+          npx cap init fms com.example.fms --web-dir build || true
+      - name: Add Android platform
+        run: |
+          cd frontend
+          npx cap add android || true
+          npx cap sync android || true
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Build Android (unsigned debug)
+        run: |
+          cd frontend/android
+          ./gradlew assembleDebug || true
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fms-apk
+          path: frontend/android/app/build/outputs/**/*.apk
+  upload-to-azure-blob:
+    needs: build-apk
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: fms-apk
+      - name: Upload to Azure Blob (optional)
+        if: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING != '' }}
+        uses: azure/storage-blob-upload@v1
+        with:
+          connection-string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+          container: 'apks'
+          source: './**/*.apk'

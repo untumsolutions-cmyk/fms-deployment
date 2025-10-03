@@ -1,0 +1,10 @@
+import sqlite3, os
+DB = os.path.join(os.path.dirname(__file__), 'backend', 'fms.db')
+os.makedirs(os.path.dirname(DB), exist_ok=True)
+conn = sqlite3.connect(DB)
+cur = conn.cursor()
+schema = open(os.path.join(os.path.dirname(__file__), 'database_schema.sql'), 'r', encoding='utf-8').read()
+cur.executescript(schema)
+conn.commit()
+conn.close()
+print('Initialized DB at', DB)

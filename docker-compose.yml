@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  fms:
+    build: .
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./backend/fms.db:/app/backend/fms.db
+      - ./backend/uploads:/app/backend/uploads
+    environment:
+      - FMS_SECRET_KEY=replace-with-a-strong-secret
+    restart: unless-stopped

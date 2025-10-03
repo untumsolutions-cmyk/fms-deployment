@@ -1,0 +1,13 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password_hash TEXT NOT NULL, role TEXT DEFAULT 'accountant');
+CREATE TABLE IF NOT EXISTS customers (customer_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, contact_info TEXT, billing_address TEXT, account_balance REAL DEFAULT 0.0);
+CREATE TABLE IF NOT EXISTS suppliers (supplier_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, contact_info TEXT, address TEXT);
+CREATE TABLE IF NOT EXISTS accounts (account_id INTEGER PRIMARY KEY AUTOINCREMENT, account_name TEXT NOT NULL, account_type TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS transactions (transaction_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, description TEXT, amount REAL, transaction_type TEXT, account_id INTEGER, customer_id INTEGER, supplier_id INTEGER);
+CREATE TABLE IF NOT EXISTS invoices (invoice_id INTEGER PRIMARY KEY AUTOINCREMENT, customer_id INTEGER, date TEXT, due_date TEXT, status TEXT DEFAULT 'draft', total_amount REAL DEFAULT 0.0, balance_due REAL DEFAULT 0.0);
+CREATE TABLE IF NOT EXISTS invoice_items (item_id INTEGER PRIMARY KEY AUTOINCREMENT, invoice_id INTEGER, description TEXT, quantity REAL DEFAULT 1.0, unit_price REAL DEFAULT 0.0, total REAL DEFAULT 0.0);
+CREATE TABLE IF NOT EXISTS quotes (quote_id INTEGER PRIMARY KEY AUTOINCREMENT, customer_id INTEGER, date TEXT, expiry_date TEXT, status TEXT DEFAULT 'draft', total_amount REAL DEFAULT 0.0);
+CREATE TABLE IF NOT EXISTS credit_notes (credit_note_id INTEGER PRIMARY KEY AUTOINCREMENT, invoice_id INTEGER, date TEXT, reason TEXT, amount REAL DEFAULT 0.0);
+CREATE TABLE IF NOT EXISTS employees (employee_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, position TEXT, email TEXT, bank_account TEXT, salary_basic REAL DEFAULT 0.0, salary_allowances REAL DEFAULT 0.0, salary_deductions REAL DEFAULT 0.0);
+CREATE TABLE IF NOT EXISTS payslips (payslip_id INTEGER PRIMARY KEY AUTOINCREMENT, employee_id INTEGER, period_start TEXT, period_end TEXT, gross_salary REAL DEFAULT 0.0, total_deductions REAL DEFAULT 0.0, net_salary REAL DEFAULT 0.0, date_issued TEXT);
+CREATE TABLE IF NOT EXISTS assets (asset_id INTEGER PRIMARY KEY AUTOINCREMENT, asset_name TEXT NOT NULL, purchase_date TEXT, purchase_cost REAL DEFAULT 0.0, depreciation_rate REAL DEFAULT 0.0, current_value REAL DEFAULT 0.0, useful_life INTEGER DEFAULT 0);
