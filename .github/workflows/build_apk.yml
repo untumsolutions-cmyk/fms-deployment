@@ -2,7 +2,7 @@ name: Build unsigned APK (Capacitor) and upload artifact
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build-apk:
